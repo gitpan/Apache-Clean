@@ -1,46 +1,58 @@
-<Location /hooks>
-  SetHandler perl-script
-  PerlHandler 'sub { use mod_perl qw(PerlStackedHandlers PerlFileApi); \
-                     shift->send_http_header();                           \
-                     return Apache::Constants::OK;                        \
-               }'
-</Location>
+PerlModule Apache2
+PerlSwitches -wT
+#PerlTrace all
+
+PerlModule Apache::Clean
+PerlModule Apache::Reload
+PerlModule My::PlainHandler
+PerlModule My::DynamicHTML
+
+LogLevel debug
 
 Alias /level @DocumentRoot@
 <Location /level>
-  SetHandler perl-script
-  PerlHandler Apache::Clean
+  PerlOutputFilterHandler Apache::Clean
   PerlSetVar CleanLevel 1
 </Location>
 
 Alias /option @DocumentRoot@
 <Location /option>
-  SetHandler perl-script
-  PerlHandler Apache::Clean
+  PerlOutputFilterHandler Apache::Clean
   PerlSetVar CleanOption shortertags
   PerlAddVar CleanOption entities
   PerlAddVar CleanOption whitespace
 </Location>
 
+Alias /reload @DocumentRoot@
+<Location /reload>
+  PerlOutputFilterHandler Apache::Clean
+  PerlSetVar CleanOption shortertags
+  PerlAddVar CleanOption entities
+  PerlAddVar CleanOption whitespace
+  PerlInitHandler Apache::Reload
+  PerlSetVar ReloadDebug On
+</Location>
+
 Alias /filter @DocumentRoot@
 <Location /filter>
-  SetHandler perl-script
-  PerlHandler Apache::Clean Apache::Clean
+  PerlOutputFilterHandler Apache::Clean Apache::Clean
   PerlSetVar CleanLevel 3
-  PerlSetVar Filter On
 </Location>
 
 <Location /plain-dynamic>
-  SetHandler perl-script
-  PerlHandler My::PlainHandler Apache::Clean
-  PerlSetVar Filter On
+  SetHandler modperl
+  PerlResponseHandler My::PlainHandler
+  PerlOutputFilterHandler Apache::Clean
 </Location>
 
 Alias /plain-static @DocumentRoot@
 <Location /plain-static>
-  SetHandler perl-script
-  PerlHandler Apache::Clean My::DoNothingHandler
-  PerlSetVar Filter On
+  PerlOutputFilterHandler Apache::Clean
 </Location>
 
-LogLevel debug
+<Location /html-dynamic>
+  SetHandler modperl
+  PerlResponseHandler My::DynamicHTML
+  PerlOutputFilterHandler Apache::Clean
+</Location>
+

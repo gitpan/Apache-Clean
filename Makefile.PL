@@ -4,9 +4,8 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME'         => 'Apache::Clean',
-    'VERSION_FROM' => 'Clean.pm', # finds $VERSION
-    'PREREQ_PM'    => { HTML::Clean => 0.08, 
-                        mod_perl    => 1.21, },
+    'VERSION_FROM' => 'Clean.pm',
+    'PREREQ_PM'    => { HTML::Clean => 0.08 },
 );
 
 sub MY::test {
