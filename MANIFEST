@@ -1,5 +1,6 @@
 Makefile.PL
 MANIFEST
+README
 Clean.pm
 t/TEST.PL
 t/conf/extra.conf.in
@@ -10,3 +11,4 @@ t/02hooks.t
 t/03level.t
 t/04option.t
 t/05filter.t
+t/06cache.t

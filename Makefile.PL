@@ -1,6 +1,6 @@
+#!perl
+
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
 
 WriteMakefile(
     'NAME'         => 'Apache::Clean',
@@ -12,7 +12,7 @@ WriteMakefile(
 sub MY::test {
   if (eval "require Apache::TestMM") {
     Apache::TestMM::generate_script('t/TEST');
-    Apache::TestMM->clean;
+    Apache::TestMM->import(qw(test clean));
     return Apache::TestMM->test;
   }
 
