@@ -17,6 +17,6 @@ Apache::TestRunPerl->generate_script();
 ModPerl::MM::WriteMakefile(
   NAME         => 'Apache::Clean',
   VERSION_FROM => 'Clean.pm',
-  PREREQ_PM    => { HTML::Clean      => 0.8,
-                    mod_perl         => 1.9909, },
+  PREREQ_PM    => { HTML::Clean => 0.8,
+                    mod_perl    => 1.9909, },
 );

@@ -16,8 +16,13 @@ plan tests => 4, (have_lwp &&
 # first, generate the CGI scripts with the proper shebang line
 
 my @lines = <DATA>;
-t_write_perl_script(catfile(qw(cgi-bin plain.cgi)), @lines[0,2]);
-t_write_perl_script(catfile(qw(cgi-bin include.cgi)), @lines[1,2]);
+
+my $serverroot = Apache::Test::vars('serverroot');
+
+t_write_perl_script(catfile($serverroot, 
+                            qw(cgi-bin plain.cgi)), @lines[0,2]);
+t_write_perl_script(catfile($serverroot,
+                            qw(cgi-bin include.cgi)), @lines[1,2]);
 
 # type text/plain should be unaltered
 

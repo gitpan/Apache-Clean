@@ -14,7 +14,7 @@ use HTML::Clean ();
 
 use strict;
 
-our $VERSION = '2.00_4';
+our $VERSION = '2.00_5';
 
 sub handler {
 
@@ -170,7 +170,7 @@ probably lots - this is the preliminary port to mod_perl 2.0
 
 =head1 SEE ALSO
 
-perl(1), mod_perl(3), Apache(3), HTML::Clean(3),
+perl(1), mod_perl(3), Apache(3), HTML::Clean(3)
 
 =head1 AUTHOR
 
@@ -178,7 +178,7 @@ Geoffrey Young <geoff@modperlcookbook.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003, Geoffrey Young
+Copyright (c) 2005, Geoffrey Young
 All rights reserved.
 
 This module is free software.  It may be used, redistributed

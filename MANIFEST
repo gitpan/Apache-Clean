@@ -2,7 +2,7 @@ Changes
 Clean.pm
 INSTALL
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 README
 t/01level.t
 t/02option.t
@@ -26,4 +26,4 @@ t/My/PlainHandler.pm
 t/My/Uppercase.pm
 t/perl-bin/include.pl
 t/perl-bin/plain.pl
-ToDo
+META.yml                                 Module meta-data (added by MakeMaker)

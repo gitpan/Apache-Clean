@@ -1,2 +1,0 @@
-add conditional GET request logic (once the mod_perl API opens it up)
-  can't fully do that - filter_init, etag, etc APIs all suck
