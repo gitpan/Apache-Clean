@@ -3,25 +3,14 @@
 use ExtUtils::MakeMaker;
 use Apache2 ();
 use Apache::Build ();
+use Apache::TestMM qw(test clean);
 use ModPerl::MM ();
 
-# override the make test target with Apache::Test stuff
-sub MY::test {
-  if (eval "require Apache::TestMM") {
-    Apache::TestMM::filter_args();
-    Apache::TestMM::generate_script('t/TEST');
-    Apache::TestMM->import(qw(test clean));
-    return Apache::TestMM->test;
-  }
+# configure Apache::Test based on incoming arguments
+Apache::TestMM::filter_args();
 
-  # The whitespace in front of @echo MUST be a single tab!
-  return <<'EOF';
-test::
-	@echo This test suite requires Apache::Test
-	@echo available from the mod_perl 2.0 sources
-	@echo or the httpd-test distribution.
-EOF
-}
+# provide the Apache::Test harness
+Apache::TestMM::generate_script('t/TEST');
 
 # do special stuff for mod_perl installations 
 # that are relative to Apache2
@@ -38,7 +27,7 @@ my %apache2 =
 WriteMakefile(
     'NAME'         => 'Apache::Clean',
     'VERSION_FROM' => 'Clean.pm',
-    'PREREQ_PM'    => { HTML::Clean    => 0.08,
+    'PREREQ_PM'    => { HTML::Clean    => 0.8,
                         mod_perl       => 1.99 },
     %apache2,
 );

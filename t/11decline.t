@@ -10,8 +10,7 @@ plan tests => 2, \&have_lwp;
 # allows other filters to still see the data
 
 my $response = GET '/decline';
-my $content = $response->content;
-chomp $content;
+chomp(my $content = $response->content);
 
 ok ($content eq q!<strong>&quot;This is a test&quot;</strong><i    > </i   >!);
 ok ($response->header('content_type') =~ m!text/plain!);

@@ -8,7 +8,7 @@ AddDefaultCharset On
 Alias /level @DocumentRoot@
 <Location /level>
   PerlOutputFilterHandler Apache::Clean
-  PerlSetVar CleanLevel 1
+  PerlSetVar CleanLevel 2
 </Location>
 
 Alias /option @DocumentRoot@

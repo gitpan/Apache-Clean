@@ -10,7 +10,7 @@ use Apache::Const -compile => qw(OK DECLINED);
 
 use HTML::Clean;
 
-$Apache::Clean::VERSION = '2.02b';
+$Apache::Clean::VERSION = '2.00_3';
 
 use strict;
 

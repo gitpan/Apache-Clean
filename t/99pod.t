@@ -6,6 +6,7 @@ use strict;
 # make sure documentation isn't broken
 
 eval {
+  # if we have both Test::More and Test::Pod we're good to go
   require Test::More;
   Test::More->import;
   require Test::Pod;
@@ -13,6 +14,8 @@ eval {
 };
 
 if ($@) {
+  # otherwise we need to plan accordingly - either
+  # using Test::More or Test.pm syntax
   eval {
     require Test::More;
   };
@@ -23,7 +26,7 @@ if ($@) {
     plan(tests => 0);
   }
   else {
-    plan(skip_all => "Test::Pod required for testing POD");
+    plan(skip_all => 'Test::Pod required for testing POD');
   }
 }
 else {
@@ -37,6 +40,7 @@ else {
   plan(tests => scalar @files);
 
   foreach my $file (@files) {
+    # use the older Test::Pod interface for maximum back compat
     pod_ok($file);
   }
 }

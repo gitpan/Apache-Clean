@@ -10,3 +10,10 @@ Revision history for Perl extension Apache::Clean for mod_perl 2.0.
           
 2.02b  03.07.2003
 	- fix Makefile.PL to install relative to Apache2 if required
+
+2.00_3  03.18.2003
+        - change VERSION scheme to signify beta to CPAN
+	- fix TEST.PL so that it includes Apache2.pm
+        - fix Makefile.PL - no need to check for Apache::Test
+          with a pure mod_perl 2.0 module (duh)
+        - add call to Apache::TestMM::filter_args()

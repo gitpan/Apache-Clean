@@ -6,8 +6,7 @@ use Apache::TestRequest;
 
 plan tests => 1, have_lwp;
 
-# test PerlSetVar CleanLevel
+# test CleanLevel
 
-my $content = GET_BODY '/level/index.html';
-chomp $content;
-ok ($content eq q!<strong>&quot;This is a test&quot;</strong><i> </i>!);
+chomp(my $content = GET_BODY '/level/index.html');
+ok ($content eq q!<b>&quot;This is a test&quot;</b><i> </i>!);

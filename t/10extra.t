@@ -11,7 +11,6 @@ plan tests => 1, \&have_lwp;
 # if data is sent over multiple filter invocations
 
 my $response = GET '/extra';
-my $content = $response->content;
-chomp($content);
+chomp(my $content = $response->content);
 ok($content eq ('x' x 1020) . '</body></html');
 

@@ -1,8 +1,7 @@
-#!perl
-
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::TestRunPerl();
+use Apache2 ();
+use Apache::TestRunPerl ();
 
 Apache::TestRunPerl->new->run(@ARGV);

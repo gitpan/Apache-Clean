@@ -6,8 +6,7 @@ use Apache::TestRequest;
 
 plan tests => 1, have_lwp;
 
-# test PerlSetVar CleanOption foo
+# test CleanOption
 
-my $content = GET_BODY '/option/index.html';
-chomp $content;
+chomp(my $content = GET_BODY '/option/index.html');
 ok ($content eq q!<b>"This is a test"</b><i> </i>!);

@@ -9,7 +9,6 @@ plan tests => 4, \&have_lwp;
 # this is really a test to see if our
 # buffer logic works when our filter
 # sends data to HTML::Clean in chunks.
-# it does not apply to Apache 1.3 filters
 
 # <strong> is 8 characters long
 # our buffer is 1024 characters
@@ -17,8 +16,7 @@ plan tests => 4, \&have_lwp;
 # pass exactly one buffer to our filter
 
 my $response = GET '/long?1016';
-my $content = $response->content;
-chomp($content);
+chomp(my $content = $response->content);
 ok($content eq ('x' x 1016) . '<b></b>');
 
 # now the <strong> tag is broken when fed to
@@ -27,22 +25,19 @@ ok($content eq ('x' x 1016) . '<b></b>');
 # with <strong></b>
 
 $response = GET '/long?1017';
-$content = $response->content;
-chomp($content);
+chomp($content = $response->content);
 ok($content eq ('x' x 1017) . '<b></b>');
 
 # the last test was <strong
 # let's test the other end of our regex, just <
 
 $response = GET '/long?1023';
-$content = $response->content;
-chomp($content);
+chomp($content = $response->content);
 ok($content eq ('x' x 1023) . '<b></b>');
 
 # now we're fully into the second buffer
 
 $response = GET '/long?1024';
-$content = $response->content;
-chomp($content);
+chomp($content = $response->content);
 ok($content eq ('x' x 1024) . '<b></b>');
 

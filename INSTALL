@@ -1,4 +1,28 @@
-this module follows standard 
+NOTE: 
+
+  you MUST use the current mod_perl 2.0 CVS sources for this
+  module to work as expected.  even then, it might not work.
+  the most recent CPAN release (1.99_08) and RedHat releases
+  most definitely will not work.
+
+  in general, you can get the recent CVS sources via
+
+    $ cvs -d":pserver:anoncvs@cvs.apache.org:/home/cvspublic" checkout modperl-2.0
+
+  see 
+
+    http://perl.apache.org/contribute/cvs_howto.html
+
+  for detailed instructions on how to use apache.org's anonymous CVS 
+
+  you can also get a recent CVS snapshot at
+
+    http://cvs.apache.org/snapshots/modperl-2.0/
+
+
+INSTALLATION:
+
+this module follows the standard 
 
   $ perl Makefile.PL
   $ make
@@ -14,11 +38,21 @@ something similar to the following
   $ export APXS=/usr/local/apache2/bin/apxs
   $ make test
 
+whether you choose to specify httpd or apxs depends on
+whether or not your installation is has mod_so, so you may need
+one or the other or both.
+
 you can also configure the test suite when building the Makefile
 
   $ perl Makefile.PL -apxs /usr/local/apache2/bin/apxs
 
-of course, this is made to run under Apache 2.0
-and mod_perl 2.0, so you'll need those as well,
+run 
+
+  $ t/TEST -help 
+
+or see the README in the Apache::Test distribtion for more options
+
+of course, this module is made to run under Apache 2.0
+and mod_perl 2.0 so you'll need those as well,
 preferably recent copies complied from CVS.  Perl 5.8.0
 is also a good idea.
