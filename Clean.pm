@@ -19,7 +19,7 @@ use Apache::Log;
 use HTML::Clean;
 use strict;
 
-$Apache::Clean::VERSION = '0.02';
+$Apache::Clean::VERSION = '0.03';
 
 # set debug level
 #  0 - messages at info or debug log levels
@@ -30,23 +30,12 @@ sub handler {
 #---------------------------------------------------------------------
 # initialize request object and variables
 #---------------------------------------------------------------------
-  
+
   my $r            = shift;
 
   my $log          = $r->server->log;
 
-  my $filter       = $r->dir_config('Filter') || undef;
-
-  my $level        = $r->dir_config('CleanLevel')  || 3;
-
-  my ($fh, $status);
-
-  # make Apache::Filter aware
-  if (lc($filter) eq 'on') {
-    $r->server->log->info("\tregistering handler with Apache::Filter")
-       if $Apache::Clean::DEBUG;
-    $r = $r->filter_register;
-  }
+  my $fh           = undef;
 
 #---------------------------------------------------------------------
 # do some preliminary stuff...
@@ -57,51 +46,74 @@ sub handler {
   unless ($r->content_type eq 'text/html') {
     $log->info("\trequest is not for an html document - skipping...")
        if $Apache::Clean::DEBUG;
-    $log->info("Exiting Apache::Clean");  
-    return DECLINED; 
+    $log->info("Exiting Apache::Clean");
+    return DECLINED;
   }
 
 #---------------------------------------------------------------------
 # get the filehandle
 #---------------------------------------------------------------------
 
-  if ($filter) {
+  if (lc $r->dir_config('Filter') eq 'on') {
+
     $log->info("\tgetting request input from Apache::Filter")
        if $Apache::Clean::DEBUG;
-    ($fh, $status) = $r->filter_input;
-    undef $fh unless $status == OK
-  } else {
+
+    # Register ourselves with Apache::Filter so
+    # later filters can see our output.
+    $r = $r->filter_register;
+
+    # Get any output from previous filters in the chain.
+    ($fh, my $status) = $r->filter_input;
+
+    unless ($status == OK) {
+      $log->warn("\tApache::Filter returned $status");
+      $log->info("Exiting Apache::Clean");
+  
+      return $status;
+    }
+  }
+  else {
+
     $log->info("\tgetting request input from Apache::File")
        if $Apache::Clean::DEBUG;
-    $fh = Apache::File->new($r->filename);
-  }
 
-  unless ($fh) {
-    $log->warn("\tcannot open request! $!");
-    $log->info("Exiting Apache::Clean");
-    return DECLINED;
+    # We are not part of a filter chain, so just process as normal.
+    $fh = Apache::File->new($r->filename);
+
+    unless ($fh) {
+      $log->warn("\tcannot open request! $!");
+      $log->info("Exiting Apache::Clean");
+  
+      return DECLINED;
+    }
   }
 
 #---------------------------------------------------------------------
 # clean up the html
 #---------------------------------------------------------------------
 
-   local $/;
-   my $dirty       = <$fh>;
-   my $h           = HTML::Clean->new(\$dirty);
+  # Slurp the file.
+  my $dirty = do {local $/; <$fh>};
 
-   $h->level($level);
-   $h->strip;
+  # Create the new HTML::Clean object.
+  my $h = HTML::Clean->new(\$dirty);
 
-   my $clean       = $h->data();
+  # Set the level of suds.
+  $h->level($r->dir_config('CleanLevel') || 1);
+
+  my %options = map { $_ => 1 } $r->dir_config->get('CleanOption');
+
+  # clean the HTML
+  $h->strip(\%options);
 
 #---------------------------------------------------------------------
 # print the clean results
 #---------------------------------------------------------------------
-  
-  $r->send_http_header('text/html');
 
-  $r->print($$clean);
+  # Send the crisp, clean data.
+  $r->send_http_header('text/html');
+  print ${$h->data};
 
 #---------------------------------------------------------------------
 # wrap up...
@@ -124,11 +136,14 @@ Apache::Clean - mod_perl interface into HTML::Clean
 
 httpd.conf:
 
- <Location /someplace>
+ <Location /clean>
     SetHandler perl-script
     PerlHandler Apache::Clean
 
     PerlSetVar  CleanLevel 3
+
+    PerlSetVar  CleanOption shortertags
+    PerlAddVar  CleanOption whitespace
  </Location>  
 
 Apache::Clean is Filter aware, meaning that it can be used within
@@ -173,15 +188,26 @@ PERL_FILE_API=1, and maybe other hooks to function properly.
 perl(1), mod_perl(3), Apache(3), HTML::Clean(3), Apache::Compress(3),
 Apache::Filter(3)
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Geoffrey Young <geoff@cpan.org>
+Geoffrey Young <geoff@modperlcookbook.org>
+Paul Lindner <paul@modperlcookbook.org>
+Randy Kobes <randy@modperlcookbook.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2001, Geoffrey Young.  All rights reserved.
+Copyright (c) 2002, Geoffrey Young, Paul Lindner, Randy Kobes.  
+All rights reserved.
 
 This module is free software.  It may be used, redistributed
 and/or modified under the same terms as Perl itself.
+
+=head1 HISTORY
+
+This code is derived from the Cookbook::Clean and
+Cookbook::TestMe modules available as part of
+"The mod_perl Developer's Cookbook".
+
+For more information, visit http://www.modperlcookbook.org/
 
 =cut

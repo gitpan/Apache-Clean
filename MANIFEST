@@ -1,6 +1,12 @@
-Changes
-README
-MANIFEST
 Makefile.PL
+MANIFEST
 Clean.pm
-t/version.t
+t/TEST.PL
+t/conf/extra.conf.in
+t/conf/modperl_extra.pl
+t/htdocs/index.html
+t/01basic.t
+t/02hooks.t
+t/03level.t
+t/04option.t
+t/05filter.t

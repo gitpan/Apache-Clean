@@ -1,0 +1,33 @@
+<Location /hooks>
+  SetHandler perl-script
+  PerlHandler 'sub { use mod_perl qw(PerlStackedHandlers PerlFileApi); \
+                     shift->send_http_header();                           \
+                     return Apache::Constants::OK;                        \
+               }'
+</Location>
+
+Alias /level @DocumentRoot@
+<Location /level>
+  SetHandler perl-script
+  PerlHandler Apache::Clean
+  PerlSetVar CleanLevel 1
+</Location>
+
+Alias /option @DocumentRoot@
+<Location /option>
+  SetHandler perl-script
+  PerlHandler Apache::Clean
+  PerlSetVar CleanOption shortertags
+  PerlAddVar CleanOption entities
+  PerlAddVar CleanOption whitespace
+</Location>
+
+Alias /filter @DocumentRoot@
+<Location /filter>
+  SetHandler perl-script
+  PerlHandler Apache::Clean Apache::Clean
+  PerlSetVar CleanLevel 3
+  PerlSetVar Filter On
+</Location>
+
+LogLevel debug
