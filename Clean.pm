@@ -1,81 +1,99 @@
 package Apache::Clean;
 
-use Apache::Filter ();      # for filtering
-use Apache::RequestRec ();  # for $r->content_type
-use Apache::RequestUtil (); # for $r->dir_config 
-use Apache::Response ();    # for $r->update_mtime
-use Apache::ServerUtil ();  # for Apache->server_root_relative
-use APR::Table ();          # for $r->dir_config->get
-use Apache::Log ();         # for $r->server->log;
+use Apache::Filter ();      # $f
+use Apache::RequestRec ();  # $r
+use Apache::RequestUtil (); # $r->dir_config()
+use Apache::Log ();         # $log->info()
+use APR::Table ();          # dir_config->get() and headers_out->get()
 
 use Apache::Const -compile => qw(OK DECLINED);
 
 use HTML::Clean;
-use File::Spec;
+
+$Apache::Clean::VERSION = '2.01b';
+
 use strict;
-
-$Apache::Clean::VERSION = '2.00b';
-
-# Get the package modification time for later update_mtime() calls
-(my $package = __PACKAGE__) =~ s!::!/!g;
-my $package_mtime = (stat $INC{"$package.pm"})[9];
 
 sub handler {
 
-  my $filter = shift;
+  my $f   = shift;
 
-  my $r      = $filter->r;
+  my $r   = $f->r;
 
-  my $log    = $r->server->log;
+  my $log = $r->server->log;
 
   $log->info('Using Apache::Clean to clean up ', $r->uri);
 
+  # we only process HTML documents
   unless ($r->content_type =~ m!text/html!i) {
-    $log->info('skipping request to', $r->uri,
-               ' (not an HTML document)' );
-
-    $log->info('Exiting Apache::Clean');
+    $log->info('skipping request to ', $r->uri, ' (not an HTML document)');
 
     return Apache::DECLINED;
   }
 
-  # parse the configuration options
-  my $level = $r->dir_config->get('CleanLevel') || 1;
+  my $context;
 
-  $log->info("Using CleanLevel $level");
+  unless ($f->ctx) {
+    # these are things we only want to do once no matter how
+    # many times our filter is invoked per request
 
-  my %options = map { $_ => 1 } $r->dir_config->get('CleanOption');
+    # parse the configuration options
+    my $level = $r->dir_config->get('CleanLevel') || 1;
 
-  $log->info('Found CleanOption ', join " : ", keys %options)
-    if %options;
-    
-  # update only the package modification time for now - 
-  # I need to investigate per-server cleanups in 2.0 more
+    $log->info("Using CleanLevel $level");
 
-  # a few notes about caching headers...
-  #   - the file mtime itself is handled by core Apache
-  #   - this all needs to happen _before_ we start interacting
-  #     with the filter
-  
-  $log->debug("updating headers with package mtime $package_mtime...");
-  $r->update_mtime($package_mtime);
-  $r->set_last_modified;
+    my %options = map { $_ => 1 } $r->dir_config->get('CleanOption');
 
-  # now we can filter the content
-  while ($filter->read(my $buffer, 1024)) {
+    $log->info('Found CleanOption ', join " : ", keys %options)
+      if %options;
 
-    $log->debug('filtering packet...');
+    # store the configuration
+    $context = { level   => $level,
+                 options => \%options,
+                 extra   => '' };
+
+    # output filters that alter content are responsible for removing
+    # the Content-Length header, but we only need to do this once.
+    $r->headers_out->unset('Content-Length');
+  }
+
+  # retrieve the filter context, which was set up on the first invocation
+  $context ||= $f->ctx;
+
+  # now, filter the content
+  while ($f->read(my $buffer, 1024)) {
+
+    # prepend any tags leftover from the last buffer or invocation
+    $buffer = $context->{extra} . $buffer if $context->{extra};
+
+    # if our buffer ends in a split tag ('<strong' for example)
+    # save processing the tag for later
+    if (($context->{extra}) = $buffer =~ m/(<[^>]*)$/) {
+      $buffer = substr($buffer, 0, - length($context->{extra}));
+    }
 
     my $h = HTML::Clean->new(\$buffer);
 
-    $h->level($level);
+    $h->level($context->{level});
 
-    $h->strip(\%options);
+    $h->strip($context->{options});
 
-    $filter->print(${$h->data});
+    $f->print(${$h->data});
   }
 
-  $log->info('Exiting Apache::Clean');
+  if ($f->seen_eos) {
+    # we've seen the end of the data stream
+
+    # print any leftover data
+    $f->print($context->{extra}) if $context->{extra};
+  }
+  else {
+    # there's more data to come
+
+    # store the filter context, including any leftover data
+    # in the 'extra' key
+    $f->ctx($context);
+  }
 
   return Apache::OK;
 }
@@ -106,19 +124,10 @@ httpd.conf:
 =head1 DESCRIPTION
 
 Apache::Clean uses HTML::Clean to tidy up large, messy HTML, saving
-bandwidth.  It is particularly useful with Apache::Compress for 
-ultimate savings.
+bandwidth. 
 
 Only documents with a content type of "text/html" are affected - all
 others are passed through unaltered.
-
-Apache::Clean also tries to be intelligent about setting proper
-caching headers.  For the moment, it only considers the modification
-time of itself in the header calculations.  Future versions may
-consider things like httpd.conf and .htaccess files.  Note that
-the core Apache content handler takes care of updating cache headers
-for static files - if you are using a dynamic content handler you
-need to do that one yourself.
 
 =head1 OPTIONS
 
@@ -137,7 +146,7 @@ in HTML::Clean.
 
   PerlSetVar CleanLevel 9
 
-CleanLevel defaults to 3.
+CleanLevel defaults to 1.
 
 =item CleanOption
 
@@ -147,7 +156,7 @@ method in HTML::Clean.
   PerlAddVar CleanOption shortertags
   PerlSetVar CleanOption whitespace
 
-CleanOption has do default.
+CleanOption has no default.
 
 =back
 
@@ -160,11 +169,15 @@ platforms or environments.
 
 probably lots - this is the preliminary port to mod_perl 2.0
 
+in particular, this module does not handle conditional GET 
+requests properly.
+
 =head1 SEE ALSO
 
-perl(1), mod_perl(3), Apache(3), HTML::Clean(3)
+perl(1), mod_perl(3), Apache(3), HTML::Clean(3),
+http://perl.apache.org/docs/2.0/user/handlers/filters.html
 
-=head1 AUTHORS
+=head1 AUTHOR
 
 Geoffrey Young <geoff@modperlcookbook.org>
 

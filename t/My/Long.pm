@@ -1,4 +1,4 @@
-package My::DynamicHTML;
+package My::Long;
 
 use Apache::RequestIO ();  # for $r->print
 use Apache::RequestRec (); # for $r->content_type
@@ -12,7 +12,8 @@ sub handler {
   my $r = shift;
 
   $r->content_type('text/html');
-  $r->print(q!<strong>&quot;This is a test&quot;</strong><i    > </i   >!);
+  my $buffer = 'x' x $r->args;
+  $r->print(qq!$buffer<strong></strong>!);
 
   return Apache::OK;
 }

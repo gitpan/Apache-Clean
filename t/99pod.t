@@ -3,6 +3,8 @@ use File::Find qw(find);
 
 use strict;
 
+# make sure documentation isn't broken
+
 eval {
   require Test::More;
   Test::More->import;

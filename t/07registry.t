@@ -6,21 +6,20 @@ use Apache::TestRequest;
 
 plan tests => 4, \&have_lwp;
 
-# dynamic content generation tests
+# Apache::Registry 
 
-# dynamic but plain content should be unaltered
-
-my $response = GET '/plain-dynamic';
+# make sure that plain content comes through unaltered
+my $response = GET '/perl-bin/plain.pl';
 my $content = $response->content;
 chomp $content;
 
-ok ($content eq q!<strong>&quot;This is a test&quot;</strong><i    > </i   >!);
+ok ($content eq q!<strong>this should be unaltered<strong>!);
 ok ($response->header('content_type') =~ m!text/plain!);
 
-# dynamic HTML should get filtered
-$response = GET '/html-dynamic';
+# Apache::Registry + SSI + Apache::Clean
+$response = GET '/perl-bin/include.pl';
 $content = $response->content;
 chomp $content;
 
-ok ($content eq q!<b>"This is a test"</b><i> </i>!);
+ok ($content eq q!<b>/perl-bin/include.pl</b>!);
 ok ($response->header('content_type') =~ m!text/html!);

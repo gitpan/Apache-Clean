@@ -1,4 +1,4 @@
-package My::DynamicHTML;
+package My::Extra;
 
 use Apache::RequestIO ();  # for $r->print
 use Apache::RequestRec (); # for $r->content_type
@@ -12,7 +12,11 @@ sub handler {
   my $r = shift;
 
   $r->content_type('text/html');
-  $r->print(q!<strong>&quot;This is a test&quot;</strong><i    > </i   >!);
+
+  # leave some rogue tag dangling off our HTML,
+  # as if there were some improperly formatted
+  # data or something
+  $r->print('x' x 1020 . '</body></html');
 
   return Apache::OK;
 }

@@ -1,15 +1,18 @@
 #!perl
 
 use ExtUtils::MakeMaker;
+use Apache2;
 
 WriteMakefile(
     'NAME'         => 'Apache::Clean',
     'VERSION_FROM' => 'Clean.pm',
-    'PREREQ_PM'    => { HTML::Clean => 0.08 },
+    'PREREQ_PM'    => { HTML::Clean    => 0.08,
+                        mod_perl       => 1.99 },
 );
 
 sub MY::test {
   if (eval "require Apache::TestMM") {
+    Apache::TestMM::filter_args();
     Apache::TestMM::generate_script('t/TEST');
     Apache::TestMM->import(qw(test clean));
     return Apache::TestMM->test;

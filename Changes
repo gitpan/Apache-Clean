@@ -1,0 +1,10 @@
+Revision history for Perl extension Apache::Clean for mod_perl 2.0.
+
+2.00b  10.14.2002
+	- original port to mod_perl 2.0
+
+2.01b  03.04.2003
+	- major updates based on newfound knowledge
+        - mega kudos to Stas for taking the time
+          to work, listen, question, and answer 
+          

@@ -1,0 +1,3 @@
+add conditional GET request logic (once the mod_perl API opens it up)
+
+httpd.conf modification stuff with per-server cleanups

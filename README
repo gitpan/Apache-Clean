@@ -20,15 +20,14 @@ httpd.conf:
 DESCRIPTION
 
 Apache::Clean uses HTML::Clean to tidy up large, messy HTML, saving
-bandwidth.  It is particularly useful with Apache::Compress for 
-ultimate savings.
+bandwidth. 
 
 Only documents with a content type of "text/html" are affected - all
 others are passed through unaltered.
 
 OPTIONS
 
-Apache::Clean supports few options, most of which are based on
+Apache::Clean supports few options - all of which are based on
 options from HTML::Clean.  Apache::Clean will only tidy up whitespace 
 (via $h->strip) and will not perform other options of HTML::Clean
 (such as browser compatibility).  See the HTML::Clean manpage for 
@@ -41,7 +40,7 @@ in HTML::Clean.
 
   PerlSetVar CleanLevel 9
 
-CleanLevel defaults to 3.
+CleanLevel defaults to 1.
 
 CleanOption
 
@@ -51,7 +50,7 @@ method in HTML::Clean.
   PerlAddVar CleanOption shortertags
   PerlSetVar CleanOption whitespace
 
-CleanOption has do default.
+CleanOption has no default.
 
 NOTES
 
@@ -62,9 +61,13 @@ FEATURES/BUGS
 
 probably lots - this is the preliminary port to mod_perl 2.0
 
+in particular, this module does not handle conditional GET 
+requests properly.
+
 SEE ALSO
 
-perl(1), mod_perl(3), Apache(3), HTML::Clean(3)
+perl(1), mod_perl(3), Apache(3), HTML::Clean(3),
+http://perl.apache.org/docs/2.0/user/handlers/filters.html
 
 AUTHOR
 
@@ -85,4 +88,3 @@ Cookbook::TestMe modules available as part of
 "The mod_perl Developer's Cookbook".
 
 For more information, visit http://www.modperlcookbook.org/
-

@@ -1,0 +1,24 @@
+this module follows standard 
+
+  $ perl Makefile.PL
+  $ make
+  $ su
+  # make install
+
+routine.
+
+if you want to run the tests, you'll need to do
+something similar to the following
+
+  $ export APACHE=/usr/local/apache2/bin/httpd
+  $ export APXS=/usr/local/apache2/bin/apxs
+  $ make test
+
+you can also configure the test suite when building the Makefile
+
+  $ perl Makefile.PL -apxs /usr/local/apache2/bin/apxs
+
+of course, this is made to run under Apache 2.0
+and mod_perl 2.0, so you'll need those as well,
+preferably a recent copy complied from CVS.  Perl 5.8.0
+is also a good idea.
