@@ -46,7 +46,7 @@ options from HTML::Clean.  Apache::Clean will only tidy up whitespace
 (such as browser compatibility).  See the HTML::Clean manpage for 
 details.
 
-* CleanLevel
+CleanLevel
 
 sets the clean level, which is passed to the level() method
 in HTML::Clean.
@@ -55,7 +55,7 @@ in HTML::Clean.
 
 CleanLevel defaults to 3.
 
-* CleanOption
+CleanOption
 
 specifies the set of options which are passed to the options()
 method in HTML::Clean.
@@ -65,7 +65,7 @@ method in HTML::Clean.
 
 CleanOption has do default.
 
-* CleanCache
+CleanCache
 
 sets the behavior of Apache::Clean in regards to proper
 cache header behavior.  this option is only meaningful

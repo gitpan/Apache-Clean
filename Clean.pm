@@ -3,12 +3,9 @@ package Apache::Clean;
 #---------------------------------------------------------------------
 # usage: PerlHandler Apache::Clean
 #
-#        PerlSetVar Filter On       # optional - will work within 
-#                                   # Apache::Filter
+#  see the Apache::Clean manpage or POD at the end of this file
 #
-#        PerlSetVar CleanLevel  N   # 1 to 9 - see HTML::Clean manpage
-#                                   # defaults to 3
-#
+# $Id: Clean.pm,v 1.12 2002/07/02 18:51:52 geoff Exp $
 #---------------------------------------------------------------------
 
 use 5.004;
@@ -20,12 +17,12 @@ use Apache::Log;
 use HTML::Clean;
 use strict;
 
-$Apache::Clean::VERSION = '0.04';
+$Apache::Clean::VERSION = '0.05';
 
 # set debug level
 #  0 - messages at info or debug log levels
 #  1 - verbose output at info or debug log levels
-$Apache::Clean::DEBUG = 1;
+$Apache::Clean::DEBUG = 0;
 
 # Get the package modification time...
 (my $package = __PACKAGE__) =~ s!::!/!g;
@@ -48,6 +45,12 @@ sub handler {
 
   my $r            = shift;
 
+  my $filter       = lc $r->dir_config('Filter') eq 'on';
+
+  # Register ourselves with Apache::Filter so
+  # later filters can see our output.
+  $r = $r->filter_register if $filter;
+
   my $log          = $r->server->log;
 
   my ($fh, $cache) = ();
@@ -58,10 +61,14 @@ sub handler {
 
   $log->info("Using Apache::Clean");
 
-  unless ($r->content_type =~ m!text/html!i) {
-    $log->info("\trequest is not for an html document - skipping...")
+  # we need separate content-type checks for filtered
+  # unfiltered cases.  in the unfiltered case we can decline sooner...
+  unless ($r->content_type =~ m!text/html!i || $filter) {
+    $log->info("\trequest is not for an html document ",
+               "(unfiltered request) - skipping...")
        if $Apache::Clean::DEBUG;
     $log->info("Exiting Apache::Clean");
+
     return DECLINED;
   }
 
@@ -69,14 +76,10 @@ sub handler {
 # get the filehandle
 #---------------------------------------------------------------------
 
-  if (lc $r->dir_config('Filter') eq 'on') {
+  if ($filter) {
 
     $log->info("\tgetting request input from Apache::Filter")
        if $Apache::Clean::DEBUG;
-
-    # Register ourselves with Apache::Filter so
-    # later filters can see our output.
-    $r = $r->filter_register;
 
     # Get any output from previous filters in the chain.
     ($fh, my $status) = $r->filter_input;
@@ -126,12 +129,32 @@ sub handler {
     }
   }
 
+  # special decline case for Apache::Filter
+  # here, we need to send the content onward even though
+  # we don't process it.  this is to make sure that the
+  # next filter (either a PerlHandler or the browser) gets
+  # the content
+
+  if ($r->content_type !~ m!text/html!i && $filter) {
+    $log->info("\trequest is not for an html document ",
+               "(Apache::Filter) - skipping...")
+       if $Apache::Clean::DEBUG;
+
+    $r->send_http_header($r->content_type);
+    print while <$fh>;
+
+    $log->info("Exiting Apache::Clean");
+
+    # we can't ever return DECLINED when using Apache::Filter
+    return OK;
+  }
+
 #---------------------------------------------------------------------
 # clean up the html
 #---------------------------------------------------------------------
 
   # Slurp the file.
-  my $dirty = do {local $/; <$fh>};
+  my $dirty = do { local $/; <$fh> };
 
   # Create the new HTML::Clean object.
   my $h = HTML::Clean->new(\$dirty);
@@ -155,7 +178,7 @@ sub handler {
 
     # only send the file if it meets cache criteria
     if ((my $status = $r->meets_conditions) == OK) {
-      $r->send_http_header('text/html');
+      $r->send_http_header($r->content_type);
     }
     else {
       return $status;
@@ -163,7 +186,7 @@ sub handler {
   }
   else {
     # else we just send a header
-    $r->send_http_header('text/html');
+    $r->send_http_header($r->content_type);
   }
 
   print ${$h->data};

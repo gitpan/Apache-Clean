@@ -30,4 +30,17 @@ Alias /filter @DocumentRoot@
   PerlSetVar Filter On
 </Location>
 
+<Location /plain-dynamic>
+  SetHandler perl-script
+  PerlHandler My::PlainHandler Apache::Clean
+  PerlSetVar Filter On
+</Location>
+
+Alias /plain-static @DocumentRoot@
+<Location /plain-static>
+  SetHandler perl-script
+  PerlHandler Apache::Clean My::DoNothingHandler
+  PerlSetVar Filter On
+</Location>
+
 LogLevel debug
