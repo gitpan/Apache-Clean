@@ -1,3 +1,2 @@
 add conditional GET request logic (once the mod_perl API opens it up)
-
-httpd.conf modification stuff with per-server cleanups
+  can't fully do that - filter_init, etag, etc APIs all suck

@@ -12,7 +12,7 @@ sub handler {
   my $r = shift;
 
   $r->content_type('text/plain');
-  $r->print(q!<strong>&quot;This is a test&quot;</strong><i    > </i   >!);
+  $r->print(q!<i    ><strong>&quot;This is a test&quot;</strong></i   >!);
 
   return Apache::OK;
 }

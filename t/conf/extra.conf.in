@@ -1,4 +1,3 @@
-PerlModule Apache2
 PerlSwitches -w
 
 LogLevel debug
@@ -29,6 +28,7 @@ Alias /perl-bin @ServerRoot@/perl-bin
   PerlOutputFilterHandler Apache::Clean
 
   PerlSetVar CleanOption shortertags
+  PerlAddVar CleanOption whitespace
   Options +ExecCGI +Includes
 </Location>
 
@@ -40,6 +40,7 @@ Alias /cgi-bin @ServerRoot@/cgi-bin
   PerlOutputFilterHandler Apache::Clean
 
   PerlSetVar CleanOption shortertags
+  PerlAddVar CleanOption whitespace
   Options +ExecCGI +Includes
 </Location>
 
@@ -49,23 +50,21 @@ Alias /cgi-bin @ServerRoot@/cgi-bin
   PerlOutputFilterHandler Apache::Clean
 
   PerlSetVar CleanOption shortertags
-  PerlAddVar CleanOption entities
   PerlAddVar CleanOption whitespace
 </Location>
 
 <Location /html-dynamic>
   SetHandler modperl
-  PerlHandler My::DynamicHTML
+  PerlResponseHandler My::DynamicHTML
   PerlOutputFilterHandler Apache::Clean
 
   PerlSetVar CleanOption shortertags
-  PerlAddVar CleanOption entities
   PerlAddVar CleanOption whitespace
 </Location>
 
 <Location /long>
   SetHandler modperl
-  PerlHandler My::Long
+  PerlResponseHandler My::Long
   PerlOutputFilterHandler Apache::Clean
 
   PerlSetVar CleanOption shortertags
@@ -73,7 +72,7 @@ Alias /cgi-bin @ServerRoot@/cgi-bin
 
 <Location /extra>
   SetHandler modperl
-  PerlHandler My::Extra
+  PerlResponseHandler My::Extra
   PerlOutputFilterHandler Apache::Clean
 
   PerlSetVar CleanOption shortertags
@@ -82,9 +81,8 @@ Alias /cgi-bin @ServerRoot@/cgi-bin
 <Location /decline>
   SetHandler modperl
   PerlResponseHandler My::PlainHandler
-  PerlOutputFilterHandler Apache::Clean My::PassThru
+  PerlOutputFilterHandler Apache::Clean My::Uppercase
 
   PerlSetVar CleanOption shortertags
-  PerlAddVar CleanOption entities
   PerlAddVar CleanOption whitespace
 </Location>

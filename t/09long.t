@@ -4,11 +4,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 4, \&have_lwp;
-
-# this is really a test to see if our
+# this is a test to see if our
 # buffer logic works when our filter
 # sends data to HTML::Clean in chunks.
+
+plan tests => 4, have_lwp;
 
 # <strong> is 8 characters long
 # our buffer is 1024 characters

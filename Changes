@@ -17,3 +17,7 @@ Revision history for Perl extension Apache::Clean for mod_perl 2.0.
         - fix Makefile.PL - no need to check for Apache::Test
           with a pure mod_perl 2.0 module (duh)
         - add call to Apache::TestMM::filter_args()
+
+2.00_4  05.29.2003
+        - updates based on lots and lots of newfound knowledge
+          also syncs with perl.com article

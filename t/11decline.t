@@ -4,13 +4,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 2, \&have_lwp;
-
-# this tests whether returning DECLINED
+# this tests whether action on non-HTML responses
 # allows other filters to still see the data
+
+plan tests => 1, have_lwp;
 
 my $response = GET '/decline';
 chomp(my $content = $response->content);
 
-ok ($content eq q!<strong>&quot;This is a test&quot;</strong><i    > </i   >!);
-ok ($response->header('content_type') =~ m!text/plain!);
+ok ($content eq q!<I    ><STRONG>&QUOT;THIS IS A TEST&QUOT;</STRONG></I   >!);

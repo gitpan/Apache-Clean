@@ -1,12 +1,15 @@
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Test;
-use Apache::TestRequest;
-
-plan tests => 1, have_lwp;
+use Apache::Test qw(plan ok have_lwp);
+use Apache::TestRequest qw(GET);
+use Apache::TestUtil qw(t_cmp);
 
 # test CleanLevel
 
-chomp(my $content = GET_BODY '/level/index.html');
-ok ($content eq q!<b>&quot;This is a test&quot;</b><i> </i>!);
+plan tests => 1, have_lwp;
+
+my $response = GET '/level/index.html';
+chomp(my $content = $response->content);
+
+ok t_cmp(q!<i><b>&quot;This is a test&quot;</b></i>!, $content);

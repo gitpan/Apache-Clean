@@ -1,5 +1,7 @@
 package Apache::Clean;
 
+use 5.008;
+
 use Apache::Filter ();      # $f
 use Apache::RequestRec ();  # $r
 use Apache::RequestUtil (); # $r->dir_config()
@@ -8,11 +10,11 @@ use APR::Table ();          # dir_config->get() and headers_out->get()
 
 use Apache::Const -compile => qw(OK DECLINED);
 
-use HTML::Clean;
-
-$Apache::Clean::VERSION = '2.00_3';
+use HTML::Clean ();
 
 use strict;
+
+our $VERSION = '2.00_4';
 
 sub handler {
 
@@ -21,8 +23,6 @@ sub handler {
   my $r   = $f->r;
 
   my $log = $r->server->log;
-
-  $log->info('Using Apache::Clean to clean up ', $r->uri);
 
   # we only process HTML documents
   unless ($r->content_type =~ m!text/html!i) {
@@ -40,17 +40,12 @@ sub handler {
     # parse the configuration options
     my $level = $r->dir_config->get('CleanLevel') || 1;
 
-    $log->info("Using CleanLevel $level");
-
     my %options = map { $_ => 1 } $r->dir_config->get('CleanOption');
-
-    $log->info('Found CleanOption ', join " : ", keys %options)
-      if %options;
 
     # store the configuration
     $context = { level   => $level,
                  options => \%options,
-                 extra   => '' };
+                 extra   => undef };
 
     # output filters that alter content are responsible for removing
     # the Content-Length header, but we only need to do this once.
@@ -110,16 +105,15 @@ Apache::Clean - interface into HTML::Clean for mod_perl 2.0
 
 httpd.conf:
 
- PerlModule Apache::Clean
+  PerlModule Apache::Clean
 
- <Location /clean>
+  Alias /clean /usr/local/apache2/htdocs
+  <Location /clean>
     PerlOutputFilterHandler Apache::Clean
 
-    PerlSetVar  CleanLevel 3
-
-    PerlSetVar  CleanOption shortertags
-    PerlAddVar  CleanOption whitespace
- </Location>  
+    PerlSetVar CleanOption shortertags
+    PerlAddVar CleanOption whitespace
+  </Location>
 
 =head1 DESCRIPTION
 
@@ -128,6 +122,10 @@ bandwidth.
 
 Only documents with a content type of "text/html" are affected - all
 others are passed through unaltered.
+
+For more information, see
+
+  http://www.perl.com/pub/a/2003/04/17/filters.html
 
 =head1 OPTIONS
 
@@ -151,10 +149,11 @@ CleanLevel defaults to 1.
 =item CleanOption
 
 specifies the set of options which are passed to the options()
-method in HTML::Clean.
+method in HTML::Clean - see the HTML::Clean manpage for a complete
+list of options.
 
-  PerlAddVar CleanOption shortertags
-  PerlSetVar CleanOption whitespace
+  PerlSetVar CleanOption shortertags
+  PerlAddVar CleanOption whitespace
 
 CleanOption has no default.
 
@@ -169,13 +168,9 @@ platforms or environments.
 
 probably lots - this is the preliminary port to mod_perl 2.0
 
-in particular, this module does not handle conditional GET 
-requests properly.
-
 =head1 SEE ALSO
 
 perl(1), mod_perl(3), Apache(3), HTML::Clean(3),
-http://perl.apache.org/docs/2.0/user/handlers/filters.html
 
 =head1 AUTHOR
 

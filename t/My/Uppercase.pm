@@ -1,4 +1,4 @@
-package My::PassThru;
+package My::Uppercase;
 
 use Apache::Filter ();
 
@@ -10,9 +10,8 @@ sub handler {
 
   my $f   = shift;
 
-  # just pass data through
   while ($f->read(my $buffer, 1024)) {
-    $f->print($buffer);
+    $f->print(uc $buffer);
   }
 
   return Apache::OK;
