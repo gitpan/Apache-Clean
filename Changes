@@ -2,3 +2,7 @@ Revision history for Perl extension Apache::Clean.
 
 0.01  02.21.2001
 	- original version
+
+0.02  03.23.2000
+	- fixed lots of minor initial release doc bugs
+          (like the wrong README and warnings in version.t)

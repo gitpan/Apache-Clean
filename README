@@ -1,6 +1,6 @@
 NAME 
 
-Apache::Clean - run regular expressions on html output
+Apache::Clean - Clean up HTML 
 
 SYNOPSIS
 
@@ -10,10 +10,7 @@ httpd.conf:
     SetHandler perl-script
     PerlHandler Apache::Clean
 
-    PerlSetVar  CleanChange "change this"
-    PerlSetVar  CleanTo "'to that'"
-    PerlAddVar  CleanChange "another change"
-    PerlAddVar  CleanTo "'gets made'"
+    PerlSetVar  Level 3
  </Location>  
 
 Apache::Clean is Filter aware, meaning that it can be used within
@@ -26,48 +23,23 @@ and modify the PerlHandler directive accordingly...
 
 DESCRIPTION
 
-Apache::Clean is a simple regular expression utility that allows you 
-to pass html output through the regular expression of your choice.
-It is only as intelligent as regular expression, so it may have 
-unintended consequences on the robustness of your html if not used
-with the appropriate level of supervision.
+Apache::Clean uses HTML::Clean to tidy up large, messy HTML, saving
+bandwidth.  It is particularly useful with Apache::Compress for 
+ultimate savings.
+
+The only current configuration directive is Level, which defaults
+to 3.  Apache::Clean will only tidy up whitespace (via $h->strip) and
+will not perform other options of HTML::Clean (such as browser
+compatibility).  See the HTML::Clean manpage for details.
 
 Only documents with a content type of "text/html" are affected - all
 others are passed through unaltered.
 
-EXAMPLE
-
-a simple, but real life example:
-
- httpd.conf:
-
-  <Location /text_only>
-     SetHandler perl-script
-     PerlHandler Apache::Clean Apache::SSI
-     Options +Includes
-     PerlSetVar  CleanChange "javascript\:parent\.myscroll.load\(\'(.*?)\'\)"
-     PerlSetVar  CleanTo "$1"
-     PerlSetVar  Filter On
-  </Location>
-
-  foo.html before:
-
-    <a href="javascript:parent.myscroll.load('http://www.foo.com')">
-
-  foo.html after:
-
-    <a href="http://www.foo.com">
-
-  This is used to make a javascript enabled page usable as text-only.
-  While the overhead is high, the number of requests for text-only
-  pages is significantly small - using a regex to clean up the page
-  saves significant maintanence overhead at minimal expense.
-  
 NOTES
 
-Verbose debugging is enabled by setting $Apache::Clean::DEBUG=1.  Very
-verbose debugging is enabled at 2.  To turn off all debug information,
-set your apache LogLevel directive above info level.
+Verbose debugging is enabled by setting $Apache::Clean::DEBUG=1
+or greater.  To turn off all debug information, set your apache
+LogLevel directive above info level.
 
 This is alpha software, and as such has not been tested on multiple
 platforms or environments.  It requires PERL_LOG_API=1, 
@@ -75,22 +47,12 @@ PERL_FILE_API=1, and maybe other hooks to function properly.
 
 FEATURES/BUGS
 
-Hopefully, you noted the additional set of single ticks in the
-synopsis.  They are unfortunately necessary for the right hand side
-of the regex for plain text substituions if we want to be able to
-allow stuff like $1 there as well.
-
-The regular expression terms are internally stored in a plain hash.
-Thus, the order of replacements cannot be guaranteed.  There are also
-implications if you want to use identical expressions for CleanChange,
-as that is used as the hash key.
-
-Apache::Clean performs a line by line replacement - sorry, no
-multiline intelligence yet...
+  No unknown bugs or features at this time...
 
 SEE ALSO
 
-perl(1), mod_perl(3), Apache(3), Apache::Filter(3)
+perl(1), mod_perl(3), Apache(3), Apache::Filter(3), 
+Apache::Compress(3), HTML::Clean(3)
 
 AUTHOR
 
@@ -98,7 +60,9 @@ Geoffrey Young <geoff@cpan.org>
 
 COPYRIGHT
 
-Copyright (c) 2000, Geoffrey Young.  All rights reserved.
+Copyright (c) 2001, Geoffrey Young.  All rights reserved.
 
 This module is free software.  It may be used, redistributed
 and/or modified under the same terms as Perl itself.
+
+=cut

@@ -19,7 +19,7 @@ use Apache::Log;
 use HTML::Clean;
 use strict;
 
-$Apache::Clean::VERSION = '0.01';
+$Apache::Clean::VERSION = '0.02';
 
 # set debug level
 #  0 - messages at info or debug log levels
@@ -166,12 +166,12 @@ PERL_FILE_API=1, and maybe other hooks to function properly.
 
 =head1 FEATURES/BUGS
 
-  No unknown bugs or features at this time...
+  No known bugs or features at this time...
 
 =head1 SEE ALSO
 
-perl(1), mod_perl(3), Apache(3), Apache::Filter(3), 
-Apache::Compress(3), HTML::Clean(3)
+perl(1), mod_perl(3), Apache(3), HTML::Clean(3), Apache::Compress(3),
+Apache::Filter(3)
 
 =head1 AUTHOR
 
