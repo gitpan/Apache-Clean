@@ -20,5 +20,5 @@ you can also configure the test suite when building the Makefile
 
 of course, this is made to run under Apache 2.0
 and mod_perl 2.0, so you'll need those as well,
-preferably a recent copy complied from CVS.  Perl 5.8.0
+preferably recent copies complied from CVS.  Perl 5.8.0
 is also a good idea.

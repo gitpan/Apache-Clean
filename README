@@ -1,6 +1,6 @@
 NAME 
 
-Apache::Clean - mod_perl interface into HTML::Clean
+Apache::Clean - interface into HTML::Clean for mod_perl 2.0
 
 SYNOPSIS
 
@@ -75,7 +75,7 @@ Geoffrey Young <geoff@modperlcookbook.org>
 
 COPYRIGHT
 
-Copyright (c) 2002, Geoffrey Young
+Copyright (c) 2003, Geoffrey Young
 All rights reserved.
 
 This module is free software.  It may be used, redistributed

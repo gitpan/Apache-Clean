@@ -8,3 +8,5 @@ Revision history for Perl extension Apache::Clean for mod_perl 2.0.
         - mega kudos to Stas for taking the time
           to work, listen, question, and answer 
           
+2.02b  03.07.2003
+	- fix Makefile.PL to install relative to Apache2 if required

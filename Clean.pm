@@ -10,7 +10,7 @@ use Apache::Const -compile => qw(OK DECLINED);
 
 use HTML::Clean;
 
-$Apache::Clean::VERSION = '2.01b';
+$Apache::Clean::VERSION = '2.02b';
 
 use strict;
 
@@ -104,7 +104,7 @@ __END__
 
 =head1 NAME 
 
-Apache::Clean - mod_perl interface into HTML::Clean
+Apache::Clean - interface into HTML::Clean for mod_perl 2.0
 
 =head1 SYNOPSIS
 
@@ -183,7 +183,7 @@ Geoffrey Young <geoff@modperlcookbook.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2002, Geoffrey Young
+Copyright (c) 2003, Geoffrey Young
 All rights reserved.
 
 This module is free software.  It may be used, redistributed
