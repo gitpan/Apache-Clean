@@ -1,9 +1,9 @@
 package My::PlainHandler;
 
-use Apache::RequestIO ();  # for $r->print
-use Apache::RequestRec (); # for $r->content_type
+use Apache2::RequestIO ();  # for $r->print
+use Apache2::RequestRec (); # for $r->content_type
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 use strict;
 
@@ -14,7 +14,7 @@ sub handler {
   $r->content_type('text/plain');
   $r->print(q!<i    ><strong>&quot;This is a test&quot;</strong></i   >!);
 
-  return Apache::OK;
+  return Apache2::Const::OK;
 }
 
 1;

@@ -24,3 +24,6 @@ Revision history for Perl extension Apache::Clean for mod_perl 2.0.
 
 2.00_5  02.01.2005
         - adjust t/05mod_cgi.t to create files relative to t/
+
+2.00_6  04.12.2005
+        - update for mod_perl 2.0-RC5 (1.999_22)

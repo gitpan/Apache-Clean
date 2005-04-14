@@ -1,8 +1,8 @@
 package My::Uppercase;
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 use strict;
 
@@ -14,7 +14,7 @@ sub handler {
     $f->print(uc $buffer);
   }
 
-  return Apache::OK;
+  return Apache2::Const::OK;
 }
 
 1;

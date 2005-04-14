@@ -2,7 +2,6 @@
 
 use 5.008;
 
-use Apache2 ();
 use ModPerl::MM ();
 use Apache::TestMM qw(test clean);
 use Apache::TestRunPerl ();
@@ -18,5 +17,5 @@ ModPerl::MM::WriteMakefile(
   NAME         => 'Apache::Clean',
   VERSION_FROM => 'Clean.pm',
   PREREQ_PM    => { HTML::Clean => 0.8,
-                    mod_perl    => 1.9909, },
+                    mod_perl2   => 0, },
 );

@@ -1,9 +1,9 @@
 package My::Long;
 
-use Apache::RequestIO ();  # for $r->print
-use Apache::RequestRec (); # for $r->content_type
+use Apache2::RequestIO ();  # for $r->print
+use Apache2::RequestRec (); # for $r->content_type
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 use strict;
 
@@ -15,7 +15,7 @@ sub handler {
   my $buffer = 'x' x $r->args;
   $r->print(qq!$buffer<strong></strong>!);
 
-  return Apache::OK;
+  return Apache2::Const::OK;
 }
 
 1;

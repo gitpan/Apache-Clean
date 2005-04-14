@@ -2,19 +2,19 @@ package Apache::Clean;
 
 use 5.008;
 
-use Apache::Filter ();      # $f
-use Apache::RequestRec ();  # $r
-use Apache::RequestUtil (); # $r->dir_config()
-use Apache::Log ();         # $log->info()
+use Apache2::Filter ();      # $f
+use Apache2::RequestRec ();  # $r
+use Apache2::RequestUtil (); # $r->dir_config()
+use Apache2::Log ();         # $log->info()
 use APR::Table ();          # dir_config->get() and headers_out->get()
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 use HTML::Clean ();
 
 use strict;
 
-our $VERSION = '2.00_5';
+our $VERSION = '2.00_6';
 
 sub handler {
 
@@ -28,7 +28,7 @@ sub handler {
   unless ($r->content_type =~ m!text/html!i) {
     $log->info('skipping request to ', $r->uri, ' (not an HTML document)');
 
-    return Apache::DECLINED;
+    return Apache2::Const::DECLINED;
   }
 
   my $context;
@@ -90,7 +90,7 @@ sub handler {
     $f->ctx($context);
   }
 
-  return Apache::OK;
+  return Apache2::Const::OK;
 }
 
 1;
@@ -99,17 +99,17 @@ __END__
 
 =head1 NAME 
 
-Apache::Clean - interface into HTML::Clean for mod_perl 2.0
+Apache2::Clean - interface into HTML::Clean for mod_perl 2.0
 
 =head1 SYNOPSIS
 
 httpd.conf:
 
-  PerlModule Apache::Clean
+  PerlModule Apache2::Clean
 
   Alias /clean /usr/local/apache2/htdocs
   <Location /clean>
-    PerlOutputFilterHandler Apache::Clean
+    PerlOutputFilterHandler Apache2::Clean
 
     PerlSetVar CleanOption shortertags
     PerlAddVar CleanOption whitespace
@@ -117,7 +117,7 @@ httpd.conf:
 
 =head1 DESCRIPTION
 
-Apache::Clean uses HTML::Clean to tidy up large, messy HTML, saving
+Apache2::Clean uses HTML::Clean to tidy up large, messy HTML, saving
 bandwidth. 
 
 Only documents with a content type of "text/html" are affected - all
@@ -129,8 +129,8 @@ For more information, see
 
 =head1 OPTIONS
 
-Apache::Clean supports few options - all of which are based on
-options from HTML::Clean.  Apache::Clean will only tidy up whitespace 
+Apache2::Clean supports few options - all of which are based on
+options from HTML::Clean.  Apache2::Clean will only tidy up whitespace 
 (via $h->strip) and will not perform other options of HTML::Clean
 (such as browser compatibility).  See the HTML::Clean manpage for 
 details.
