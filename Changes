@@ -27,3 +27,6 @@ Revision history for Perl extension Apache::Clean for mod_perl 2.0.
 
 2.00_6  04.12.2005
         - update for mod_perl 2.0-RC5 (1.999_22)
+
+2.00_7  04.14.2005
+        - fix pod so it matches the distribution

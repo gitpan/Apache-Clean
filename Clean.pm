@@ -14,7 +14,7 @@ use HTML::Clean ();
 
 use strict;
 
-our $VERSION = '2.00_6';
+our $VERSION = '2.00_7';
 
 sub handler {
 
@@ -99,17 +99,17 @@ __END__
 
 =head1 NAME 
 
-Apache2::Clean - interface into HTML::Clean for mod_perl 2.0
+Apache::Clean - interface into HTML::Clean for mod_perl 2.0
 
 =head1 SYNOPSIS
 
 httpd.conf:
 
-  PerlModule Apache2::Clean
+  PerlModule Apache::Clean
 
   Alias /clean /usr/local/apache2/htdocs
   <Location /clean>
-    PerlOutputFilterHandler Apache2::Clean
+    PerlOutputFilterHandler Apache::Clean
 
     PerlSetVar CleanOption shortertags
     PerlAddVar CleanOption whitespace
@@ -117,7 +117,7 @@ httpd.conf:
 
 =head1 DESCRIPTION
 
-Apache2::Clean uses HTML::Clean to tidy up large, messy HTML, saving
+Apache::Clean uses HTML::Clean to tidy up large, messy HTML, saving
 bandwidth. 
 
 Only documents with a content type of "text/html" are affected - all
@@ -129,8 +129,8 @@ For more information, see
 
 =head1 OPTIONS
 
-Apache2::Clean supports few options - all of which are based on
-options from HTML::Clean.  Apache2::Clean will only tidy up whitespace 
+Apache::Clean supports few options - all of which are based on
+options from HTML::Clean.  Apache::Clean will only tidy up whitespace 
 (via $h->strip) and will not perform other options of HTML::Clean
 (such as browser compatibility).  See the HTML::Clean manpage for 
 details.
